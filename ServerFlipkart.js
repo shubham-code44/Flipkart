@@ -1148,7 +1148,40 @@ let mobile=[
     ],
     "category":'Mobiles',"brand":'Apple',"name":'Apple iPhone XR (White, 64 GB)',"img":'https://i.ibb.co/27rSms4/apple-iphone-xr-mry52hn-a-original-imafa6zkfgwpnsgz.jpg',"rating":'4.6',"ratingDesc":'6,360 Ratings & 554 Reviews',"details":['15.49 cm (6.1 inch) Display','64 GB ROM |','12MP Rear Camera | 7MP Front Camera','A12 Bionic Chip Processor','Brand Warranty of 1 Year','iOS 13 Compatible'],"price":47900,"prevPrice":49900,"discount":4,"emi":'No Cost EMI',"assured":true,"exchange":'Upto ₹10,800 Off on Exchange',"ram":64,"popularity":6360},  
   ]
-
+  let com=[{rating:1,display:"Not recommended at all",text:""},
+  {rating:1,display:"Useless product",text:""},
+  {rating:4,display:"Not recommended at all",text:"Great display"},
+  {rating:5,display:"Not recommended at all",text:"good product👍👍👍"},
+  {rating:1,display:"Very poor",text:"Speaker not working after 7days"},
+  {rating:2,display:"Slightly disappointed",text:"speaker problem"},
+  {rating:3,display:"Decent product",text:"Camera performance very bad"},
+  {rating:5,display:"Classy product",text:"The poco M2pro mobile is very👍 nice I love this phone"},
+  {rating:1,display:"Useless product",text:"The earphone jack got issue. Whenever i remove the earfone it was showing connected. And the earpiece speaker was not working when call is made"},
+  {rating:1,display:"Terrible product",text:"Microphone not working"},
+  {rating:4,display:"Very poor",text:"Thanks to Flipkart for fast delivery"},
+  {rating:3,display:"Fair",text:"All over good, some time get hanged in simple task like what's app message and calling time"},
+  {rating:5,display:"Classy product",text:"Good👍"},
+  {rating:4,display:"Good choice",text:"Good"},
+  {rating:4,display:"Nice product",text:"Everything thing is good only size and battery can be shrinked a bit and weigh below 195-190 gms would have made a lot of difference. And a 90hz speed too required"},     
+  {rating:5,display:"Worth every penny",text:"Best phone i have had."},
+  {rating:1,display:"Waste of maoney!",text:"#Worst# When we are calling to someone they couldn't able to hear our voice... Flipkart is not taking replacement also.. Very bad thing"},
+  {rating:1,display:"Horrible",text:"Don't buy this mobile it has speaker issue"},
+  {rating:1,display:"Terrible product",text:"Don't buy this more problems charging connecting and disconnecting problem and mobile hang"},
+  {rating:1,display:"Utterly Disappointed",text:"My m2pro has yearspaker problem"},
+  {rating:1,display:"Not recommended at all",text:"miui is not good in poco mobile"},
+  {rating:4,display:"Value-for-money",text:"Nice phone ...blindly go for it"},
+  {rating:5,display:"Must buy!",text:"Best phone and both it in exchange of old one..so price was also awesome...n features r too good"},
+  {rating:5,display:"Worth every penny",text:"I m happy 😁😊"},
+  {rating:3,display:"Just okay",text:"It's good phone but battery performance is poor..."},
+  {rating:4,display:"Value-for-money",text:"Good 🥳🥳🥳🥳"},
+  {rating:5,display:"Just wow!",text:"Good"},
+  {rating:2,display:"Bad quality",text:"I am reviewing it after 6 month of using, The worst phone I ever used, I bought it for gaming purpose but I quit to playing game and using it for general purpose but I feel a lot of hanging issue, sometimes work very slowly,"},
+  {rating:2,display:"Bad quality",text:"Feels like a Brick"},
+  {rating:3,display:"Decent product",text:"ok product"},
+  {rating:3,display:"Just okay",text:"Normal but not awesome performance"},
+  {rating:2,display:"Expected a better product",text:"Network quality is bad"},
+  {rating:3,display:"Fair",text:"Good but tower problem and voice mic not clear"},
+]
   let comp=[]
   let cart=[]
   let wishlist=[]
@@ -1156,7 +1189,7 @@ let mobile=[
   {firstname:"happy",lastname:"kumar",user:"happy",email:"happy@gmail.com",password:"hap",phone:"123456789"}]
 
 app.get("/allmobile",function(req,res){
-    let {brand,ram,rating,price}=req.query;
+    let {brand,ram,rating,price,page=1}=req.query;
       let mob=mobile.filter((pr)=> pr.category=='Mobiles')
     if(brand)
     {
@@ -1178,14 +1211,20 @@ app.get("/allmobile",function(req,res){
         let price1=price.split(",")
         mob=mob.filter((pr)=> price1.find((tr)=> tr=="0-5000"?pr.price>0 && pr.price<5000:tr=="5000-10000"?pr.price>5000 && pr.price<10000:tr=="10000-20000"?pr.price>10000 && pr.price<20000:tr=="20000"?pr.price>20000:"" ))
     }
-   
-    res.send(mob)
+    let start=+page+7-7 
+    let end=+page*7
+    res.send({"mobile":mob,"start":+start,"end":end})
 })
 
 app.get("/Mobile/:id",function(req,res){
     let {id}=req.params 
+    let {reviewPage=1}=req.query 
+    let start=reviewPage*6-6
+    let end=reviewPage*6
     let mob=mobile.find((pr)=> pr.id==id)
-    res.send(mob)
+    let comment=com.filter((pr,index)=> index>=start && index<end?pr:"")
+    let tpage=Math.round(com.length/6);
+    res.send({mobile:mob,view:comment,pagenum:reviewPage,totalPage:tpage})
 })
 
 app.post("/heart/:id",function(req,res){
@@ -1277,4 +1316,8 @@ app.post("/deleteWishlist/:id",function(req,res){
   wishlist.splice(index,1)
   mobile.find((pr)=> pr.id==id?pr.assured=true:"")
   res.send(index)
+})
+
+app.get("/review",function(req,res){
+    
 })
